@@ -26,6 +26,7 @@
   "homepage": "https://github.com/jpmtrabbold/input-props#readme",
   "dependencies": {
     "mobx": "^4.0.0",
+    "mobx-react-lite": "^1.4.1",
     "react": "^16.9.0"
   },
   "devDependencies": {
