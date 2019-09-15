@@ -1,0 +1,35 @@
+{
+  "name": "input-props",
+  "version": "1.0.0",
+  "description": "React hook for a two-way data-binding feel to your forms controlled by a mobx state.",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jpmtrabbold/input-props.git"
+  },
+  "keywords": [
+    "two-way",
+    "data-binding",
+    "mobx",
+    "form",
+    "input"
+  ],
+  "author": "Joao Pedro M. Trabbold",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jpmtrabbold/input-props/issues"
+  },
+  "homepage": "https://github.com/jpmtrabbold/input-props#readme",
+  "dependencies": {
+    "mobx": "^4.0.0",
+    "react": "^16.9.0"
+  },
+  "devDependencies": {
+    "@types/react": "^16.9.2",
+    "typescript": "^3.6.3"
+  }
+}
