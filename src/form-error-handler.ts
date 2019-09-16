@@ -3,7 +3,7 @@ import { IUpdatable } from "./field-props"
 
 type FieldType<T> = keyof T | IUpdatable
 
-export default class FormErrorHandler<T> {
+export default class FormErrorHandler<T extends any> {
 
     @observable errors = [] as {field: FieldType<T>, error: string}[]
     hasError = false
