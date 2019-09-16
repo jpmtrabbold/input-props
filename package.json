@@ -1,7 +1,7 @@
 {
   "name": "input-props",
-  "version": "1.0.0",
-  "description": "React hook for a two-way data-binding feel to your forms controlled by a mobx state.",
+  "version": "1.0.1",
+  "description": "A React component that provides a two-way data-binding feel to your forms controlled by a mobx state.",
   "main": "index.js",
   "scripts": {
     "build": "tsc",

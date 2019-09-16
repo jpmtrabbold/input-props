@@ -1,7 +1,6 @@
 import { observable } from "mobx"
-import { IUpdatable } from "./field-props"
 
-type FieldType<T> = keyof T | IUpdatable
+type FieldType<T> = keyof T | any
 
 export default class FormErrorHandler<T extends any> {
 

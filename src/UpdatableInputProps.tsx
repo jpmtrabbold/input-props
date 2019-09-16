@@ -7,9 +7,10 @@ interface UpdatableInputPropsProps {
     children: React.ReactElement
     updatable: IUpdatable
     onValueChange?: OnValueChangeType
-    errorHandler?: FormErrorHandler<unknown>
+    errorHandler?: FormErrorHandler<unknown | any>
     isCheckbox?: boolean
 }
+
 export const UpdatableInputProps = observer((props: UpdatableInputPropsProps) => {
     const isCheckbox = (props.isCheckbox === undefined ? typeof props.updatable.value == 'boolean' : props.isCheckbox)
     
