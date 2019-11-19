@@ -1,21 +1,48 @@
 import { observer } from "mobx-react-lite"
 import React, { useMemo, useCallback } from 'react'
-import fieldProps, { IUpdatable, OnValueChangeType } from "./field-props"
+import fieldProps, { IUpdatable, OnValueChangeType, InputPropsVariant, InputPropsConfig } from "./field-props"
 import FormErrorHandler from "./form-error-handler"
 
 interface UpdatableInputPropsProps {
+    /**
+     * the component that you want InputProps to control. InputProps will add the `value`
+     * and `onChange` props to the component to automate the state update to 
+     * updatable.value and updatable.updated
+     */
     children: React.ReactElement
+    /**
+     * updatable object {value: '', updated: false | true} that holds this state
+     */
     updatable: IUpdatable
+    /**
+     * in case you want to be notified about when a change will take place. Your callback
+     * can return a promise that, if fulfilled with a return of false, will preven the 
+     * update to happen.
+     */
     onValueChange?: OnValueChangeType
+    /**
+    * in case you are using a FormErrorHandler to handle the form errors
+    */
     errorHandler?: FormErrorHandler<unknown | any>
+    /**
+     * if the children is a checkbox
+     */
     isCheckbox?: boolean
+    /**
+     * some built-in variants
+     */
+    variant?: InputPropsVariant
+    /**
+     * some built-in configurations
+     */
+    config?: InputPropsConfig
 }
 
 export const UpdatableInputProps = observer((props: UpdatableInputPropsProps) => {
     const isCheckbox = (props.isCheckbox === undefined ? typeof props.updatable.value == 'boolean' : props.isCheckbox)
-    
-    const newFieldProps = fieldProps(props.updatable, props.onValueChange)
-    
+
+    const newFieldProps = fieldProps(props.updatable, props.onValueChange, props.variant, props.config)
+
     const onChange = useCallback(newFieldProps.onChange, [props.updatable])
     const value = useMemo(() => newFieldProps.value, [newFieldProps.value])
 
