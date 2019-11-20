@@ -54,7 +54,6 @@ export default function fieldProps(updatableObject: IUpdatable, onValueChange?: 
             return
         }
         const value = (!event.target ? event : event.target.type === 'checkbox' ? returnCheckboxValue(event.target.checked, config.isCheckbox) : returnNormalValue(event.target.value, variant, config))
-        debugger
         if (updatableObject.value !== value) {
             if (!checkValue(value, variant, config)) {
                 return
