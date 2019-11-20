@@ -25,10 +25,6 @@ interface UpdatableInputPropsProps {
     */
     errorHandler?: FormErrorHandler<unknown | any>
     /**
-     * if the children is a checkbox
-     */
-    isCheckbox?: boolean
-    /**
      * some built-in variants
      */
     variant?: InputPropsVariant
@@ -38,10 +34,12 @@ interface UpdatableInputPropsProps {
     config?: InputPropsConfig
 }
 
-export const UpdatableInputProps = observer((props: UpdatableInputPropsProps) => {
-    const isCheckbox = (props.isCheckbox === undefined ? typeof props.updatable.value == 'boolean' : props.isCheckbox)
-
-    const newFieldProps = fieldProps(props.updatable, props.onValueChange, props.variant, props.config)
+export const UpdatableInputProps = observer(({
+    config = {},
+    ...props
+}: UpdatableInputPropsProps) => {
+    const isCheckbox = (config.isCheckbox === undefined ? typeof props.updatable.value === 'boolean' : config.isCheckbox)
+    const newFieldProps = fieldProps(props.updatable, props.onValueChange, props.variant, {...config, isCheckbox})
 
     const onChange = useCallback(newFieldProps.onChange, [props.updatable])
     const value = useMemo(() => newFieldProps.value, [newFieldProps.value])
