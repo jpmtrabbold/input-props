@@ -115,10 +115,16 @@ function changeElementValue(value: any, variant: InputPropsVariant, config: Inpu
             value = ""
         } else {
             value = value.toString().trim()
+            const split = value.split('.')
+            let intValue = split[0]
             const thousandsSep = config.thousandsSeparator || ','
-            value = value.replace(/\B(?=(\d{3})+(?!\d))/g, thousandsSep)
+            intValue = intValue.replace(/\B(?=(\d{3})+(?!\d))/g, thousandsSep)
             const decSep = config.decimalsSeparator || '.'
-            value = value.replace('.', decSep)
+            if (split.length > 1) {
+                value = intValue + decSep + split[1]
+            } else {
+                value = intValue
+            }
         }
     }
     if (config.elementValueModifiers) {
@@ -139,6 +145,9 @@ function returnNormalValue(value: any, variant: InputPropsVariant, config: Input
         } else {
             const thousandsSep = config.thousandsSeparator || ','
             value = (value as string).toString().trim()
+            if (value.length > 1 && value[0] === '0') {
+                value = value.replace('0','')
+            }
             value = value.replace(new RegExp(thousandsSep, 'g'), '')
             const decSep = config.decimalsSeparator || '.'
             value = value.replace(decSep, '.')
