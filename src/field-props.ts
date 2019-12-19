@@ -2,6 +2,7 @@ import { isObservableProp } from "mobx"
 
 export interface IUpdatable { value?: any, updated: boolean }
 export type OnValueChangeType = (newValue: any) => Promise<boolean | undefined | void>
+export type OnValueChangedType = ((oldValue: any, newValue: any) => any) | undefined
 /** 
  * all - no conversion - assigns the event.target.value or event.target.checked as is to the state
  * onlyNumbers - deprecated
@@ -32,17 +33,23 @@ export type InputPropsConfig = {
      * hint: create your own set of reusable modifiers!
     */
     stateModifiers?: ((value: any) => string)[]
+    /** modifier for when the element value was rendered undefined or null. input-props' default is to return "" */
+    elementValueForUndefinedOrNull?: (value: any) => any
     /** if the field is a checkbox (and event.target.checked should be considered). InputProps will try to infer from usage */
     isCheckbox?: boolean
 }
 
-export default function fieldProps(updatableObject: IUpdatable, onValueChange?: OnValueChangeType, variant: InputPropsVariant = 'all', config: InputPropsConfig = {}): { onChange: any, value: any } {
+export default function fieldProps(updatableObject: IUpdatable, onValueChange?: OnValueChangeType, variant: InputPropsVariant = 'all', config: InputPropsConfig = {}, onValueChanged: OnValueChangedType = undefined): { onChange: any, value: any } {
 
     const setValue = (value: any) => {
+        const old = updatableObject.value
         updatableObject.value = value
-
         if (!updatableObject.updated)
             updatableObject.updated = true
+
+        if (onValueChanged) {
+            onValueChanged(old, value)
+        }
     }
 
     if (!isObservableProp(updatableObject, 'value')) {
@@ -68,7 +75,7 @@ export default function fieldProps(updatableObject: IUpdatable, onValueChange?: 
             }
         }
     }
-    return { onChange, value: changeElementValue(updatableObject.value, variant, config) }
+    return { onChange, value: formatElementValue(updatableObject.value, variant, config) }
 }
 
 /**
@@ -77,10 +84,16 @@ export default function fieldProps(updatableObject: IUpdatable, onValueChange?: 
  * @param propertyName name of the property that will be updated
  * @param onValueChange optional - callback whenever the field changes. This callback has to return true if it accepts the new value, or false if not
  */
-export function fieldValueProps<T extends Object, P extends Extract<keyof T, string>>(parentObject: T, propertyName: P, onValueChange?: OnValueChangeType, variant: InputPropsVariant = 'all', config: InputPropsConfig = {}): { onChange: any, value: any } {
+export function fieldValueProps<T extends Object, P extends Extract<keyof T, string>>(parentObject: T, propertyName: P, onValueChange?: OnValueChangeType, variant: InputPropsVariant = 'all', config: InputPropsConfig = {}, onValueChanged: OnValueChangedType = undefined): { onChange: any, value: any } {
 
     const setValue = (value: any) => {
+        const old = parentObject[propertyName]
+        
         parentObject[propertyName] = value
+
+        if (onValueChanged) {
+            onValueChanged(old, value)
+        }
     }
 
     if (!isObservableProp(parentObject, propertyName)) {
@@ -106,12 +119,12 @@ export function fieldValueProps<T extends Object, P extends Extract<keyof T, str
             }
         }
     }
-    return { onChange, value: changeElementValue(parentObject[propertyName], variant, config) }
+    return { onChange, value: formatElementValue(parentObject[propertyName], variant, config) }
 }
 
-function changeElementValue(value: any, variant: InputPropsVariant, config: InputPropsConfig = {}) {
+export function formatElementValue(value: any, variant: InputPropsVariant, config: InputPropsConfig = {}) {
     if (variant === 'numeric') {
-        if (value === undefined) {
+        if (value === undefined || value === null) {
             value = ""
         } else {
             value = value.toString().trim()
@@ -132,7 +145,14 @@ function changeElementValue(value: any, variant: InputPropsVariant, config: Inpu
             value = modifier(value)
         }
     }
-    return (value === undefined ? null : value)
+    if (value === undefined || value === null) {
+        if (config.elementValueForUndefinedOrNull) {
+            return config.elementValueForUndefinedOrNull(value)
+        } else {
+            return ""
+        }
+    }
+    return value
 }
 
 function returnNormalValue(value: any, variant: InputPropsVariant, config: InputPropsConfig = {}) {
@@ -146,7 +166,7 @@ function returnNormalValue(value: any, variant: InputPropsVariant, config: Input
             const thousandsSep = config.thousandsSeparator || ','
             value = (value as string).toString().trim()
             if (value.length > 1 && value[0] === '0') {
-                value = value.replace('0','')
+                value = value.replace('0', '')
             }
             value = value.replace(new RegExp(thousandsSep, 'g'), '')
             const decSep = config.decimalsSeparator || '.'

@@ -1,6 +1,6 @@
 import { useObserver } from "mobx-react-lite"
 import React, { useCallback } from 'react'
-import { OnValueChangeType, fieldValueProps, InputPropsVariant, InputPropsConfig } from "./field-props"
+import { OnValueChangeType, fieldValueProps, InputPropsVariant, InputPropsConfig, OnValueChangedType } from "./field-props"
 import FormErrorHandler from "./form-error-handler"
 
 /**
@@ -29,6 +29,10 @@ interface InputPropsProps<T extends Object, P extends Extract<keyof T, string>> 
      * update to happen.
      */
     onValueChange?: OnValueChangeType
+    /**
+     * in case you want to be notified about when a change has happened
+     */
+    onValueChanged?: OnValueChangedType
     /**
      * in case you are using a FormErrorHandler to handle the form errors
      */
@@ -61,12 +65,12 @@ export function InputProps<T extends Object, P extends Extract<keyof T, string>>
     config = {},
     ...props
 }: InputPropsProps<T, P>) {
-    const [stateObject, propertyName, onValueChange, isCheckboxProps, errorHandler, value, variant, obsConfig] =
-        useObserver(() => [props.stateObject, props.propertyName, props.onValueChange, config.isCheckbox, props.errorHandler, props.stateObject[props.propertyName], props.variant, config])
+    const [stateObject, propertyName, onValueChange, onValueChanged, isCheckboxProps, errorHandler, value, variant, obsConfig] =
+        useObserver(() => [props.stateObject, props.propertyName, props.onValueChange, props.onValueChanged, config.isCheckbox, props.errorHandler, props.stateObject[props.propertyName], props.variant, config])
 
     const isCheckbox = (isCheckboxProps === undefined ? typeof stateObject[propertyName] === 'boolean' : isCheckboxProps)
 
-    const newFieldProps = fieldValueProps(stateObject, propertyName, onValueChange, variant, {...obsConfig, isCheckbox})
+    const newFieldProps = fieldValueProps(stateObject, propertyName, onValueChange, variant, {...obsConfig, isCheckbox}, onValueChanged)
     const onChange = useCallback(newFieldProps.onChange, [stateObject])
 
     const errorProps = !!errorHandler && errorHandler.getFieldError(propertyName)

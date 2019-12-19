@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite"
 import React, { useMemo, useCallback } from 'react'
-import fieldProps, { IUpdatable, OnValueChangeType, InputPropsVariant, InputPropsConfig } from "./field-props"
+import fieldProps, { IUpdatable, OnValueChangeType, InputPropsVariant, InputPropsConfig, OnValueChangedType } from "./field-props"
 import FormErrorHandler from "./form-error-handler"
 
 interface UpdatableInputPropsProps {
@@ -21,6 +21,10 @@ interface UpdatableInputPropsProps {
      */
     onValueChange?: OnValueChangeType
     /**
+     * in case you want to be notified about when a change has happened
+    */
+    onValueChanged?: OnValueChangedType
+    /**
     * in case you are using a FormErrorHandler to handle the form errors
     */
     errorHandler?: FormErrorHandler<unknown | any>
@@ -39,11 +43,11 @@ export const UpdatableInputProps = observer(({
     ...props
 }: UpdatableInputPropsProps) => {
     const isCheckbox = (config.isCheckbox === undefined ? typeof props.updatable.value === 'boolean' : config.isCheckbox)
-    const newFieldProps = fieldProps(props.updatable, props.onValueChange, props.variant, {...config, isCheckbox})
+    const newFieldProps = fieldProps(props.updatable, props.onValueChange, props.variant, { ...config, isCheckbox }, props.onValueChanged)
 
     const onChange = useCallback(newFieldProps.onChange, [props.updatable])
     const value = useMemo(() => newFieldProps.value, [newFieldProps.value])
-
+    
     const errorProps = !!props.errorHandler && props.errorHandler.getFieldError(props.updatable)
     const newProps = isCheckbox ? { onChange, checked: value, ...errorProps } : { onChange, value, ...errorProps }
 
