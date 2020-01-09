@@ -1,6 +1,12 @@
 # input-props
 A React component that provides a two-way data-binding feel to your forms controlled by a mobx state.
 
+## Installation
+
+```
+npm install --save input-props
+```
+
 ## How to use
 
 Assuming you are using an observable object/store that holds your state:
