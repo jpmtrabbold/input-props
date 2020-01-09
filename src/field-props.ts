@@ -57,10 +57,7 @@ export default function fieldProps(updatableObject: IUpdatable, onValueChange?: 
     }
 
     const onChange = async (event: any) => {
-        if (event === undefined || event == null) {
-            return
-        }
-        const value = (!event.target ? event : event.target.type === 'checkbox' ? returnCheckboxValue(event.target.checked, config.isCheckbox) : returnNormalValue(event.target.value, variant, config))
+        const value = ((!event || !event.target) ? event : event.target.type === 'checkbox' ? returnCheckboxValue(event.target.checked, config.isCheckbox) : returnNormalValue(event.target.value, variant, config))
         if (updatableObject.value !== value) {
             if (!checkValue(value, variant, config)) {
                 return
@@ -101,10 +98,7 @@ export function fieldValueProps<T extends Object, P extends Extract<keyof T, str
     }
 
     const onChange = async (event: any) => {
-        if (event === undefined || event == null) {
-            return
-        }
-        const value = (!event.target ? event : event.target.type === 'checkbox' ? returnCheckboxValue(event.target.checked, config.isCheckbox) : returnNormalValue(event.target.value, variant, config))
+        const value = ((!event || !event.target) ? event : event.target.type === 'checkbox' ? returnCheckboxValue(event.target.checked, config.isCheckbox) : returnNormalValue(event.target.value, variant, config))
         if (parentObject[propertyName] !== value) {
             if (!checkValue(value, variant, config)) {
                 return

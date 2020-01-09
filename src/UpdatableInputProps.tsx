@@ -48,7 +48,7 @@ export const UpdatableInputProps = observer(({
     const onChange = useCallback(newFieldProps.onChange, [props.updatable])
     const value = useMemo(() => newFieldProps.value, [newFieldProps.value])
     
-    const errorProps = !!props.errorHandler && props.errorHandler.getFieldError(props.updatable)
+    const errorProps = !!props.errorHandler && props.errorHandler.errors && props.errorHandler.getFieldError(props.updatable)
     const newProps = isCheckbox ? { onChange, checked: value, ...errorProps } : { onChange, value, ...errorProps }
 
     const newElement = React.cloneElement(props.children, newProps)
