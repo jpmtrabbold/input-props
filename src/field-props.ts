@@ -122,15 +122,21 @@ export function formatElementValue(value: any, variant: InputPropsVariant, confi
             value = ""
         } else {
             value = value.toString().trim()
-            const split = value.split('.')
-            let intValue = split[0]
-            const thousandsSep = config.thousandsSeparator || ','
-            intValue = intValue.replace(/\B(?=(\d{3})+(?!\d))/g, thousandsSep)
-            const decSep = config.decimalsSeparator || '.'
-            if (split.length > 1) {
-                value = intValue + decSep + split[1]
+            if (value === "-" || value === "0.") {
+                // just uses value as is
+            } else if (value === ".") {
+                value = "0."
             } else {
-                value = intValue
+                const split = value.split('.')
+                let intValue = split[0]
+                const thousandsSep = config.thousandsSeparator || ','
+                intValue = intValue.replace(/\B(?=(\d{3})+(?!\d))/g, thousandsSep)
+                const decSep = config.decimalsSeparator || '.'
+                if (split.length > 1) {
+                    value = intValue + decSep + split[1]
+                } else {
+                    value = intValue
+                }
             }
         }
     }
@@ -159,12 +165,19 @@ function returnNormalValue(value: any, variant: InputPropsVariant, config: Input
         } else {
             const thousandsSep = config.thousandsSeparator || ','
             value = (value as string).toString().trim()
-            if (value.length > 1 && value[0] === '0') {
-                value = value.replace('0', '')
+
+            if (value === '.') {
+                value = "0."
+            } else if (value === '0.') {
+                // keep it like that
+            } else {
+                if (value.length > 1 && value[0] === '0' && value[1] !== '.') {
+                    value = value.replace('0', '')
+                }
+                value = value.replace(new RegExp(thousandsSep, 'g'), '')
+                const decSep = config.decimalsSeparator || '.'
+                value = value.replace(decSep, '.')
             }
-            value = value.replace(new RegExp(thousandsSep, 'g'), '')
-            const decSep = config.decimalsSeparator || '.'
-            value = value.replace(decSep, '.')
         }
     }
     if (config.stateModifiers) {
@@ -207,7 +220,7 @@ function checkValue(value: any, variant: InputPropsVariant, config: InputPropsCo
         case 'onlyNumbers':
         case 'numericString':
         case 'numeric':
-            if (value !== undefined && value !== "") {
+            if (value !== undefined && value !== "" && value !== "-") {
                 if (isNaN(value)) {
                     return false
                 }
