@@ -32,4 +32,4 @@ If you need to know when the data changed after the state was updated:
 </InputProps>
 ```
 
-There are lots of entry points for interceptors for differents types of data, you can see all the options in the JSDoc documentation of the components.
+There are lots of entry points for interceptors for differents types of data, you can see all the options in the JSDoc documentation of the components. Have fun!
