@@ -13,6 +13,8 @@ export type OnValueChangedType = ((oldValue: any, newValue: any) => any) | undef
 export type InputPropsVariant = 'all' | 'onlyNumbers' | 'numericString' | 'numeric' | 'string'
 
 export type InputPropsConfig = {
+    /** does not allow negatives */
+    onlyPositives?: boolean
     /** if variant is numeric, this defines the thousands separator (defaults to ',') */
     thousandsSeparator?: string
     /** if variant is numeric, this defines the decimals separator (defaults to '.') */
@@ -161,7 +163,7 @@ function returnNormalValue(value: any, variant: InputPropsVariant, config: Input
     }
     if (variant === 'numeric') {
         if (!value) {
-            value = undefined
+            value = ""
         } else {
             const thousandsSep = config.thousandsSeparator || ','
             value = (value as string).toString().trim()
@@ -220,7 +222,7 @@ function checkValue(value: any, variant: InputPropsVariant, config: InputPropsCo
         case 'onlyNumbers':
         case 'numericString':
         case 'numeric':
-            if (value !== undefined && value !== "" && value !== "-") {
+            if (value !== undefined && value !== null && value !== "" && value !== "-") {
                 if (isNaN(value)) {
                     return false
                 }
@@ -228,6 +230,16 @@ function checkValue(value: any, variant: InputPropsVariant, config: InputPropsCo
                     return false
                 }
                 if (config.maxIntegerLength !== undefined && countIntegerLength(value) > config.maxIntegerLength) {
+                    return false
+                }
+                if (config.onlyPositives && value < 0) {
+                    return false
+                }
+                if (config.maxDecimalPlaces === 0 && (value || "").includes('.')) {
+                    return false
+                }
+            } else {
+                if (value === "-" && config.onlyPositives) {
                     return false
                 }
             }
