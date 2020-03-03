@@ -21,8 +21,6 @@ export type InputPropsConfig = {
     decimalsSeparator?: string
     /** if variant is numeric, this will restrict the number of decimal places (down to 0) */
     maxDecimalPlaces?: number
-    /** self explanatory */
-    numberOfDecimalsAlwaysAppearing?: number
     /** if variant is numeric, this will restrict the number of integer places */
     maxIntegerLength?: number
     /** functions to validate every key stroke. If any of them returns false, the key stroke does not come through as a change to the state
@@ -89,7 +87,7 @@ export function fieldValueProps<T extends Object, P extends Extract<keyof T, str
 
     const setValue = (value: any) => {
         const old = parentObject[propertyName]
-
+        
         parentObject[propertyName] = value
 
         if (onValueChanged) {
@@ -136,20 +134,10 @@ export function formatElementValue(value: any, variant: InputPropsVariant, confi
                 const thousandsSep = config.thousandsSeparator || ','
                 intValue = intValue.replace(/\B(?=(\d{3})+(?!\d))/g, thousandsSep)
                 const decSep = config.decimalsSeparator || '.'
-                
-                const forceDecimals = typeof(config.numberOfDecimalsAlwaysAppearing) === 'number' && (config.numberOfDecimalsAlwaysAppearing ?? 0) > 0
                 if (split.length > 1) {
-                    value = intValue + decSep
-                    if (forceDecimals) {
-                        value += split[1].padEnd(config.numberOfDecimalsAlwaysAppearing!, '0')
-                    } else {
-                        value += split[1]
-                    }
+                    value = intValue + decSep + split[1]
                 } else {
                     value = intValue
-                    if (forceDecimals) {
-                        value += "." + ("" as string).padEnd(config.numberOfDecimalsAlwaysAppearing!, '0')
-                    }
                 }
             }
         }
