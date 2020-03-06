@@ -1,6 +1,6 @@
 import { observable } from "mobx"
 
-type FieldType<T> = keyof T | any
+type FieldType<T> = keyof T
 
 export default class FormErrorHandler<T extends any> {
 
@@ -10,8 +10,7 @@ export default class FormErrorHandler<T extends any> {
     hasError = false
 
     /** use this method to add an error to field.
-     * When using InputProps, field must be the the string property name of the field in the model that you are setting the error
-     * When using UpdatableInputProps, field must be the updatable itself
+     * field must be the the string property name of the field in the model that you are setting the error
      */
     error(field: FieldType<T>, error: string) {
         this.errors.push({field, error})

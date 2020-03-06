@@ -1,8 +1,8 @@
 import { isObservableProp } from "mobx"
 
 export interface IUpdatable { value?: any, updated: boolean }
-export type OnValueChangeType = (newValue: any) => Promise<boolean | undefined | void>
-export type OnValueChangedType = ((oldValue: any, newValue: any) => any) | undefined
+export type OnValueChangeType<A extends Object> = (newValue: any, additionalData?: A) => Promise<boolean | undefined | void>
+export type OnValueChangedType<A extends Object> = ((oldValue: any, newValue: any, additionalData?: A) => any) | undefined
 /** 
  * all - no conversion - assigns the event.target.value or event.target.checked as is to the state
  * onlyNumbers - deprecated
@@ -43,40 +43,8 @@ export type InputPropsConfig = {
     isCheckbox?: boolean
 }
 
-export default function fieldProps(updatableObject: IUpdatable, onValueChange?: OnValueChangeType, variant: InputPropsVariant = 'all', config: InputPropsConfig = {}, onValueChanged: OnValueChangedType = undefined): { onChange: any, value: any } {
-
-    const setValue = (value: any) => {
-        const old = updatableObject.value
-        updatableObject.value = value
-        if (!updatableObject.updated)
-            updatableObject.updated = true
-
-        if (onValueChanged) {
-            onValueChanged(old, value)
-        }
-    }
-
-    if (!isObservableProp(updatableObject, 'value')) {
-        throw new Error(`Property 'value' on the updatable object is not a mobx observable.`)
-    }
-
-    const onChange = async (event: any) => {
-        const value = ((!event || !event.target) ? event : event.target.type === 'checkbox' ? returnCheckboxValue(event.target.checked, config.isCheckbox) : returnNormalValue(event.target.value, variant, config))
-        if (updatableObject.value !== value) {
-            if (!checkValue(value, variant, config)) {
-                return
-            }
-            if (onValueChange) {
-                const valueChangeRet = await onValueChange(value)
-                if (typeof valueChangeRet !== "boolean" || valueChangeRet) {
-                    setValue(value)
-                }
-            } else {
-                setValue(value)
-            }
-        }
-    }
-    return { onChange, value: formatElementValue(updatableObject.value, variant, config) }
+export function isUpdatable(v: any): v is IUpdatable {
+    return (typeof (v) === 'object' && v.hasOwnProperty('value') && v.hasOwnProperty('updated'))
 }
 
 /**
@@ -85,30 +53,63 @@ export default function fieldProps(updatableObject: IUpdatable, onValueChange?: 
  * @param propertyName name of the property that will be updated
  * @param onValueChange optional - callback whenever the field changes. This callback has to return true if it accepts the new value, or false if not
  */
-export function fieldValueProps<T extends Object, P extends Extract<keyof T, string>>(parentObject: T, propertyName: P, onValueChange?: OnValueChangeType, variant: InputPropsVariant = 'all', config: InputPropsConfig = {}, onValueChanged: OnValueChangedType = undefined): { onChange: any, value: any } {
+export function fieldValueProps<T extends Object, P extends Extract<keyof T, string>, A extends Object>(
+    parentObject: T,
+    propertyName: P,
+    onValueChange?: OnValueChangeType<A>,
+    variant: InputPropsVariant = 'all',
+    config: InputPropsConfig = {},
+    onValueChanged: OnValueChangedType<A> = undefined,
+    paramsToValueChange: A = {} as A,
+): { onChange: any, value: any } {
 
-    const setValue = (value: any) => {
-        const old = parentObject[propertyName]
-
-        parentObject[propertyName] = value
-
-        if (onValueChanged) {
-            onValueChanged(old, value)
+    const getVal = () => {
+        const property = parentObject[propertyName]
+        if (isUpdatable(property)) {
+            return property.value
+        } else {
+            return property
         }
     }
 
-    if (!isObservableProp(parentObject, propertyName)) {
-        throw new Error(`Property ${propertyName} is not an mobx observable.`)
+    const setVal = (value: any) => {
+        const property = parentObject[propertyName]
+        if (isUpdatable(property)) {
+            property.value = value
+            if (!property.updated) {
+                property.updated = true
+            }
+        } else {
+            parentObject[propertyName] = value
+        }
+    }
+    const setValue = (value: any) => {
+        const old = getVal()
+        setVal(value)
+
+        if (onValueChanged) {
+            onValueChanged(old, value, paramsToValueChange)
+        }
+    }
+
+    if (isUpdatable(parentObject[propertyName])) {
+        if (!isObservableProp(parentObject[propertyName], 'value')) {
+            throw new Error(`Property 'value' on the updatable object is not a mobx observable.`)
+        }
+    } else {
+        if (!isObservableProp(parentObject, propertyName)) {
+            throw new Error(`Property ${propertyName} is not an mobx observable.`)
+        }
     }
 
     const onChange = async (event: any) => {
         const value = ((!event || !event.target) ? event : event.target.type === 'checkbox' ? returnCheckboxValue(event.target.checked, config.isCheckbox) : returnNormalValue(event.target.value, variant, config))
-        if (parentObject[propertyName] !== value) {
+        if (getVal() !== value) {
             if (!checkValue(value, variant, config)) {
                 return
             }
             if (onValueChange) {
-                const valueChangeRet = await onValueChange(value)
+                const valueChangeRet = await onValueChange(value, paramsToValueChange)
                 if (typeof valueChangeRet !== "boolean" || valueChangeRet) {
                     setValue(value)
                 }
@@ -117,7 +118,7 @@ export function fieldValueProps<T extends Object, P extends Extract<keyof T, str
             }
         }
     }
-    return { onChange, value: formatElementValue(parentObject[propertyName], variant, config) }
+    return { onChange, value: formatElementValue(getVal(), variant, config) }
 }
 
 export function formatElementValue(value: any, variant: InputPropsVariant, config: InputPropsConfig = {}) {
@@ -136,8 +137,8 @@ export function formatElementValue(value: any, variant: InputPropsVariant, confi
                 const thousandsSep = config.thousandsSeparator || ','
                 intValue = intValue.replace(/\B(?=(\d{3})+(?!\d))/g, thousandsSep)
                 const decSep = config.decimalsSeparator || '.'
-                
-                const forceDecimals = typeof(config.numberOfDecimalsAlwaysAppearing) === 'number' && (config.numberOfDecimalsAlwaysAppearing ?? 0) > 0
+
+                const forceDecimals = typeof (config.numberOfDecimalsAlwaysAppearing) === 'number' && (config.numberOfDecimalsAlwaysAppearing ?? 0) > 0
                 if (split.length > 1) {
                     value = intValue + decSep
                     if (forceDecimals) {
@@ -148,7 +149,7 @@ export function formatElementValue(value: any, variant: InputPropsVariant, confi
                 } else {
                     value = intValue
                     if (forceDecimals) {
-                        value += "." + ("" as string).padEnd(config.numberOfDecimalsAlwaysAppearing!, '0')
+                        value += "." + "".padEnd(config.numberOfDecimalsAlwaysAppearing!, '0')
                     }
                 }
             }
