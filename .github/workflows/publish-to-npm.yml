@@ -15,9 +15,9 @@ jobs:
           node-version: 12
           registry-url: https://registry.npmjs.org/
       - run: npm install
-      - run: cp package.json /lib/package.json
-      - run: cp README.md /lib/README.md
-      - run: cp LICENSE /lib/LICENSE
+      - run: cp package.json ./lib/
+      - run: cp README.md ./lib/
+      - run: cp LICENSE ./lib/
       - run: npm publish /lib/ --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
