@@ -18,6 +18,6 @@ jobs:
       - run: cp package.json ./lib/
       - run: cp README.md ./lib/
       - run: cp LICENSE ./lib/
-      - run: npm publish /lib/ --access public
+      - run: npm publish ./lib/ --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
