@@ -26,12 +26,12 @@
   },
   "homepage": "https://github.com/jpmtrabbold/input-props#readme",
   "dependencies": {
-    "mobx": "^4.0.0",
-    "mobx-react-lite": "^1.4.1",
-    "react": "^16.9.0"
+    "mobx": "^5.15.4",
+    "mobx-react": "^6.2.5",
+    "react": "^16.13.1"
   },
   "devDependencies": {
-    "@types/react": "^16.9.2",
-    "typescript": "^3.6.3"
+    "@types/react": "^16.9.44",
+    "typescript": "^3.9.7"
   }
 }
