@@ -1,4 +1,4 @@
-import { observable } from "mobx"
+import { observable, action, computed } from "mobx"
 
 type FieldType<T> = keyof T
 
@@ -7,14 +7,15 @@ export default class FormErrorHandler<T extends any> {
     @observable errors = [] as {field: FieldType<T>, error: string}[]
     
     /** whether there's any error in any field */
-    hasError = false
+    @computed get hasError() {
+        return !!this.errors.length
+    }
 
     /** use this method to add an error to field.
      * field must be the the string property name of the field in the model that you are setting the error
      */
-    error(field: FieldType<T>, error: string) {
+    @action error(field: FieldType<T>, error: string) {
         this.errors.push({field, error})
-        this.hasError = true
     }
 
     /** checks whether a field has any error */
@@ -32,9 +33,13 @@ export default class FormErrorHandler<T extends any> {
         }
     }
 
+    /** reset error for specific field */
+    @action resetFieldError(field: FieldType<T>) {
+        this.errors = this.errors.filter(e => e.field !== field)
+    }
+
     /** reset all errors */
-    reset() {
+    @action reset() {
         this.errors = []
-        this.hasError = false
     }
 }

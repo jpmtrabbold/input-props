@@ -90,8 +90,7 @@ export function InputProps<T extends Object, P extends Extract<keyof T, string>,
         props.additionalChangeData,
         props.stateObject[props.propertyName],
         props.errorHandler && props.errorHandler.errors,
-        (props.stateObject[props.propertyName] as any).value,
-        
+        (props.stateObject[props.propertyName] as any)?.value,        
     ])
 
     const isCheckbox = (isCheckboxProps === undefined ? (isUpdatable(value) ? typeof value.value === 'boolean' : typeof value === 'boolean'): isCheckboxProps)

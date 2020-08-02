@@ -44,7 +44,7 @@ export type InputPropsConfig = {
 }
 
 export function isUpdatable(v: any): v is IUpdatable {
-    return (typeof (v) === 'object' && v.hasOwnProperty('value') && v.hasOwnProperty('updated'))
+    return (typeof (v) === 'object' && v?.hasOwnProperty('value') && v?.hasOwnProperty('updated'))
 }
 
 /**
