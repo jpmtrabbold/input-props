@@ -1,4 +1,4 @@
-import { useObserver } from "mobx-react-lite"
+import { useObserver } from "mobx-react"
 import React, { useCallback } from 'react'
 import { OnValueChangeType, fieldValueProps, InputPropsVariant, InputPropsConfig, OnValueChangedType, isUpdatable } from "./field-props"
 import FormErrorHandler from "./form-error-handler"
