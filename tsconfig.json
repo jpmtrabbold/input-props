@@ -1,20 +1,36 @@
 {
-    "compilerOptions": {
-        "target": "es5",
-        "module": "commonjs",
-        "declaration": true,
-        "outDir": "./lib",
-        "strict": true,
-        "lib": [ "es2018" ],
-        "esModuleInterop": true,
-        "experimentalDecorators": true,
-        "jsx": "react"
-    },
-    "include": [
-        "src"
+  "include": [
+    "src",
+    "types"
+  ],
+  "compilerOptions": {
+    "module": "esnext",
+    "lib": [
+      "dom",
+      "esnext"
     ],
-    "exclude": [
-        "node_modules",
-        "**/__tests__/*"
-    ]
+    "importHelpers": true,
+    "declaration": true,
+    "sourceMap": true,
+    "rootDir": "./src",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "paths": {
+      "@": [
+        "./"
+      ],
+      "*": [
+        "src/*",
+        "node_modules/*"
+      ]
+    },
+    "jsx": "react",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+  }
 }

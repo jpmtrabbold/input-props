@@ -6,21 +6,24 @@ import FormErrorHandler from "./form-error-handler"
 /**
  * InputProps parameters
  */
-interface InputPropsProps<T extends Object, P extends Extract<keyof T, string>, A extends Object> {
+export interface InputPropsProps<T extends Object, P extends Extract<keyof T, string>, A extends Object> {
     /**
      * the component that you want InputProps to control. InputProps will add the `value`
      * and `onChange` props to the component to automate the state update to 
      * stateObject[propertyName]
+     * @default mandatory
      */
     children: React.ReactElement
     /**
      * object that holds the property that will be bound to this component. That property
      * has to be a mobx observable
+     * @default mandatory
      */
     stateObject: T
     /**
      * name of the property inside the stateObject that will be bound to this component. 
      * That property has to be a mobx observable
+     * @default mandatory
      */
     propertyName: P
     /**
@@ -51,17 +54,8 @@ interface InputPropsProps<T extends Object, P extends Extract<keyof T, string>, 
 
 /**
  * A React component that provides a two-way data-binding feel to your forms controlled by a mobx state.
- * @param props InputProps props
- * @example
- * 
- * const store = useLocalStore(() => ({
- *    myFieldValue: ''
- * }))
- * 
- * <InputProps stateObject={store} propertyName='myFieldValue'>
- *    <input/>
- * </InputProps>
- * 
+ * It works by creating the `onChange` and `value` props and passing then down to the children input automatically.
+ * It also passes down the 'helperText' and 'error' props down if an error handler is being used 
  */
 export function InputProps<T extends Object, P extends Extract<keyof T, string>, A extends Object>({
     config = {},
