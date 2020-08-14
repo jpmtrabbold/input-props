@@ -2,7 +2,7 @@ import React from 'react';
 import { InputProps } from '../src/InputProps'
 import { useLocalStore, useObserver } from 'mobx-react';
 import { observable, computed } from 'mobx';
-import FormErrorHandler from '../src/form-error-handler';
+import { FormErrorHandler } from '../src/form-error-handler';
 
 export const InputPropsStory = () => {
   // this store is local just for the sake of the example. Ideally it would be in a separate file

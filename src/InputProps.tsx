@@ -1,7 +1,7 @@
 import { useObserver } from "mobx-react"
 import React, { useCallback } from 'react'
 import { OnValueChangeType, fieldValueProps, InputPropsVariant, InputPropsConfig, OnValueChangedType, isUpdatable } from "./field-props"
-import FormErrorHandler from "./form-error-handler"
+import { FormErrorHandler } from "./form-error-handler"
 
 /**
  * InputProps parameters
@@ -84,10 +84,10 @@ export function InputProps<T extends Object, P extends Extract<keyof T, string>,
         props.additionalChangeData,
         props.stateObject[props.propertyName],
         props.errorHandler && props.errorHandler.errors,
-        (props.stateObject[props.propertyName] as any)?.value,        
+        (props.stateObject[props.propertyName] as any)?.value,
     ])
 
-    const isCheckbox = (isCheckboxProps === undefined ? (isUpdatable(value) ? typeof value.value === 'boolean' : typeof value === 'boolean'): isCheckboxProps)
+    const isCheckbox = (isCheckboxProps === undefined ? (isUpdatable(value) ? typeof value.value === 'boolean' : typeof value === 'boolean') : isCheckboxProps)
 
     const newFieldProps = fieldValueProps(
         stateObject,
@@ -97,10 +97,10 @@ export function InputProps<T extends Object, P extends Extract<keyof T, string>,
         { ...obsConfig, isCheckbox },
         onValueChanged,
         additionalChangeData
-    
-        )
+
+    )
     const onChange = useCallback(newFieldProps.onChange, [stateObject])
-    
+
 
     const errorProps = !!errorHandler && errorHandler.getFieldError(propertyName)
     const newProps = isCheckbox ? { onChange, checked: newFieldProps.value, ...errorProps } : { onChange, value: newFieldProps.value, ...errorProps }

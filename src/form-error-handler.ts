@@ -2,7 +2,7 @@ import { observable, action, computed } from "mobx"
 
 type FieldType<T> = keyof T
 
-export default class FormErrorHandler<T extends any> {
+export class FormErrorHandler<T extends any> {
 
     @observable errors = [] as {field: FieldType<T>, error: string}[]
     
@@ -43,3 +43,5 @@ export default class FormErrorHandler<T extends any> {
         this.errors = []
     }
 }
+
+export default FormErrorHandler
