@@ -41,10 +41,10 @@ jobs:
         env:
           CI: true
       
-      - run: cp package.json ./lib/
-      - run: cp README.md ./lib/
-      - run: cp LICENSE ./lib/
-      
+      - run: cp package.json ./dist/
+      - run: cp README.md ./dist/
+      - run: cp LICENSE ./dist/
+
       - name: Publish to npm
         run: npm publish ./dist/ --access public
         env:
