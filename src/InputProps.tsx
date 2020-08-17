@@ -83,8 +83,8 @@ export function InputProps<T extends Object, P extends Extract<keyof T, string>,
         config,
         props.additionalChangeData,
         props.stateObject[props.propertyName],
-        props.errorHandler && props.errorHandler.errors,
-        (props.stateObject[props.propertyName] as any)?.value,
+        props.errorHandler && props.errorHandler.errors && props.errorHandler.getFieldError(props.propertyName), // this is for MobX to react to errorHandler changes to this field
+        (props.stateObject[props.propertyName] as any)?.value, // this is for MobX to react to value changes
     ])
 
     const isCheckbox = (isCheckboxProps === undefined ? (isUpdatable(value) ? typeof value.value === 'boolean' : typeof value === 'boolean') : isCheckboxProps)

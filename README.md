@@ -3,7 +3,7 @@ A React component that provides a two-way data-binding feel to your forms contro
 
 Please check out the [storybook](https://jpmtrabbold.github.io/input-props)!
 
-What? You don't use MobX? It is the best state management library for React hands down. Please take a look at this [example I wrote with MobX (hooks version) and Typescript](https://github.com/jpmtrabbold/react-hooks-mobx-typescript-todo-list/tree/master/todo-list/src/features), and imagine a entire codebase being written with that kind of simplicity and equal or better performance than any other state management library. It's just great. Anyway, coming back to InputProps...
+What? You don't use MobX? It is the best state management library for React hands down. Please take a look at this [example I wrote with MobX (hooks version) and Typescript](https://github.com/jpmtrabbold/react-hooks-mobx-typescript-todo-list/tree), and imagine a entire codebase being written with that kind of simplicity and equal or better performance than any other state management library. It's just great. Anyway, coming back to InputProps...
 
 ## Installation
 
