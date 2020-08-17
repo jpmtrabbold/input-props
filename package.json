@@ -1,6 +1,6 @@
 {
   "name": "input-props",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "A React component that provides a two-way data-binding feel to your forms controlled by a mobx state.",
   "license": "MIT",
   "main": "dist/index.js",
